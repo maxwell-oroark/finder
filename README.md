@@ -1,3 +1,3 @@
 # Finder
----
-Like tinder, but for food.
+
+Rhymes with tinder, in pronunciation and subject material.
