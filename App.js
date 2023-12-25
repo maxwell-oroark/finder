@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, View, FlatList, Dimensions } from "react-native";
+import { View, FlatList, Dimensions } from "react-native";
 import Card from "./Card";
 
 export default function App() {
@@ -26,11 +26,11 @@ export default function App() {
     <View>
       <FlatList
         data={restuarants}
-        horizontal
         renderItem={({ item }) => {
           return (
             <FlatList
               data={item.photos}
+              horizontal
               renderItem={({ item }) => (
                 <Card
                   name={item.name}
@@ -41,24 +41,15 @@ export default function App() {
               keyExtractor={(item) => item.name}
               snapToAlignment="start"
               decelerationRate="fast"
-              snapToInterval={Dimensions.get("window").height}
+              snapToInterval={Dimensions.get("window").width}
             />
           );
         }}
         keyExtractor={(item) => item.name}
         snapToAlignment="start"
         decelerationRate="fast"
-        snapToInterval={Dimensions.get("window").width}
+        snapToInterval={Dimensions.get("window").height}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
