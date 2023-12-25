@@ -1,16 +1,55 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import useLocation from "./hooks/useLocation";
+import { useState } from "react";
+import { StyleSheet, View, FlatList, Dimensions } from "react-native";
+import Card from "./Card";
 
 export default function App() {
-  const location = useLocation({});
+  const [restuarants, setRestuarants] = useState([
+    {
+      name: "Guidos",
+      photos: [
+        { name: "item 1", color: "red" },
+        { name: "item 2", color: "white" },
+        { name: "item 3", color: "blue" },
+      ],
+    },
+    {
+      name: "McDonalds",
+      photos: [
+        { name: "item 4", color: "green" },
+        { name: "item 5", color: "purple" },
+        { name: "item 6", color: "gold" },
+      ],
+    },
+  ]);
 
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <Text>{location.latitude}</Text>
-      <Text>{location.longitude}</Text>
-      <StatusBar style="auto" />
+    <View>
+      <FlatList
+        data={restuarants}
+        horizontal
+        renderItem={({ item }) => {
+          return (
+            <FlatList
+              data={item.photos}
+              renderItem={({ item }) => (
+                <Card
+                  name={item.name}
+                  color={item.color}
+                  key={`${item.name}-${item.color}`}
+                />
+              )}
+              keyExtractor={(item) => item.name}
+              snapToAlignment="start"
+              decelerationRate="fast"
+              snapToInterval={Dimensions.get("window").height}
+            />
+          );
+        }}
+        keyExtractor={(item) => item.name}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        snapToInterval={Dimensions.get("window").width}
+      />
     </View>
   );
 }
