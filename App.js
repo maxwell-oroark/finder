@@ -9,6 +9,7 @@ export default function App() {
   console.log({ location });
   useEffect(() => {
     if (location) {
+      console.log("fetching from google places API");
       const PLACES_URL = "https://places.googleapis.com/v1/places:searchNearby";
       const options = {
         method: "POST",
