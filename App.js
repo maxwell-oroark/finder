@@ -1,68 +1,56 @@
 import { useEffect, useState } from "react";
-import { View, FlatList, Dimensions } from "react-native";
+import { View, Text, FlatList, Dimensions } from "react-native";
 import Card from "./Card";
+import useLocation from "./hooks/useLocation";
 
 export default function App() {
-  const [data, setData] = useState();
+  const [data, setData] = useState({});
+  const location = useLocation();
+  console.log({ location });
   useEffect(() => {
-    const PLACES_URL = "https://places.googleapis.com/v1/places:searchNearby";
-    const options = {
-      method: "POST",
-      body: JSON.stringify({
-        locationRestriction: {
-          circle: {
-            center: {
-              latitude: 37.7937,
-              longitude: -122.3965,
+    if (location) {
+      const PLACES_URL = "https://places.googleapis.com/v1/places:searchNearby";
+      const options = {
+        method: "POST",
+        body: JSON.stringify({
+          rankPreference: "POPULARITY",
+          includedTypes: ["restaurant"],
+          maxResultCount: 5,
+          locationRestriction: {
+            circle: {
+              center: location,
+              radius: 500.0,
             },
-            radius: 500.0,
           },
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": "places.photos,places.displayName,places.id",
+          "X-Goog-Api-Key": process.env.EXPO_PUBLIC_PLACES_API_KEY,
         },
-      }),
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": process.env.EXPO_PUBLIC_PLACES_API_KEY,
-      },
-    };
-    fetch(PLACES_URL, options)
-      .then((response) => response.json())
-      .then(setData);
-  }, []);
+      };
+      fetch(PLACES_URL, options)
+        .then((response) => response.json())
+        .then(setData)
+        .catch((err) => {
+          console.log({ err });
+        });
+    }
+  }, [location]);
 
-  console.log({ data });
-
-  const [restuarants, setRestuarants] = useState([
-    {
-      name: "Guidos",
-      photos: [
-        { name: "item 1", color: "red" },
-        { name: "item 2", color: "#FFEFD5" },
-        { name: "item 3", color: "blue" },
-      ],
-    },
-    {
-      name: "McDonalds",
-      photos: [
-        { name: "item 4", color: "green" },
-        { name: "item 5", color: "purple" },
-        { name: "item 6", color: "gold" },
-      ],
-    },
-    {
-      name: "Barbaros",
-      photos: [
-        { name: "item 7", color: "silver" },
-        { name: "item 8", color: "plum" },
-        { name: "item 9", color: "orange" },
-      ],
-    },
-  ]);
+  if (!data.places) {
+    return (
+      <View>
+        <Text>No places</Text>
+      </View>
+    );
+  }
 
   return (
     <View>
       <FlatList
-        data={restuarants}
-        renderItem={({ item }) => {
+        data={data.places}
+        renderItem={({ item: parentItem }) => {
           return (
             <FlatList
               initialScrollIndex={1}
@@ -71,15 +59,11 @@ export default function App() {
                 offset: Dimensions.get("window").width * index,
                 index,
               })}
-              data={item.photos}
+              data={parentItem.photos}
               horizontal
-              renderItem={({ item }) => (
-                <Card
-                  name={item.name}
-                  color={item.color}
-                  key={`${item.name}-${item.color}`}
-                />
-              )}
+              renderItem={({ item }) => {
+                return <Card name={item.name} />;
+              }}
               keyExtractor={(item) => item.name}
               snapToAlignment="start"
               decelerationRate="fast"
@@ -93,7 +77,7 @@ export default function App() {
           offset: Dimensions.get("window").height * index,
           index,
         })}
-        keyExtractor={(item) => item.name}
+        keyExtractor={(item) => item.id}
         snapToAlignment="start"
         decelerationRate="fast"
         snapToInterval={Dimensions.get("window").height}

@@ -7,7 +7,10 @@ function useLocation(initialState) {
     Location.requestForegroundPermissionsAsync().then((permission) => {
       if (permission.granted) {
         Location.getCurrentPositionAsync({}).then((location) => {
-          setLocation(location.coords);
+          setLocation({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          });
         });
       }
     });

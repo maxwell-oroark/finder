@@ -1,10 +1,14 @@
-import { StyleSheet, Dimensions, Text, View } from "react-native";
+import { StyleSheet, Dimensions, ImageBackground } from "react-native";
 
-export default function Card({ name, color = "#3B5323" }) {
+export default function Card({ name }) {
   return (
-    <View style={{ ...styles.container, backgroundColor: color }}>
-      <Text style={styles.title}>{name}</Text>
-    </View>
+    <ImageBackground
+      resizeMode="cover"
+      source={{
+        uri: `https://places.googleapis.com/v1/${name}/media?key=${process.env.EXPO_PUBLIC_PLACES_API_KEY}&maxHeightPx=400`,
+      }}
+      style={{ ...styles.container }}
+    ></ImageBackground>
   );
 }
 
