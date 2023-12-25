@@ -55,7 +55,7 @@ export default function App() {
             <FlatList
               initialScrollIndex={1}
               getItemLayout={(data, index) => ({
-                length: Dimensions.get("window").width,
+                length: data.length,
                 offset: Dimensions.get("window").width * index,
                 index,
               })}
@@ -73,7 +73,7 @@ export default function App() {
         }}
         initialScrollIndex={1}
         getItemLayout={(data, index) => ({
-          length: Dimensions.get("window").height,
+          length: data.length,
           offset: Dimensions.get("window").height * index,
           index,
         })}
